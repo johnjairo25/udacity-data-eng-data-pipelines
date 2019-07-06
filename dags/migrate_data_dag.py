@@ -20,7 +20,7 @@ default_args = {
 dag = DAG('migrate_data_to_redshift',
           default_args=default_args,
           description='Load and transform data in Redshift with Airflow',
-          # schedule_interval='0 * * * *',
+          schedule_interval='0 * * * *',
           catchup=False
           )
 
@@ -93,7 +93,9 @@ load_time_dimension_table = LoadDimensionOperator(
 
 run_quality_checks = DataQualityOperator(
     task_id='Run_data_quality_checks',
-    dag=dag
+    dag=dag,
+    redshift_conn_id="redshift",
+    tables=["songplays", "songs", "users", "artists", "time"]
 )
 
 end_operator = DummyOperator(task_id='Stop_execution', dag=dag)
