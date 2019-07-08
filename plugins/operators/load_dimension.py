@@ -17,6 +17,15 @@ class LoadDimensionOperator(BaseOperator):
                  source_sql_command="",
                  delete_data=True,
                  *args, **kwargs):
+        """
+        Initializes the load dimension table operator. It moves data from a staging to a dimension table in Redshift.
+        :param redshift_conn_id: identifier of the Redshift connection in Airflow.
+        :param table: the table that we want to load.
+        :param source_sql_command: the SQL command used to obtain the data to load.
+        :param delete_data: True if we want to delete existing data. False otherwise.
+        :param args: Airflow's args.
+        :param kwargs: Airflow's kwargs.
+        """
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
         self.table = table
@@ -24,6 +33,11 @@ class LoadDimensionOperator(BaseOperator):
         self.delete_data = delete_data
 
     def execute(self, context):
+        """
+        Executes the load dimension operation. It moves the data specified by the source_sql_command to the
+        specified dimension table.
+        :param context: Airflow's context.
+        """
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
         if self.delete_data:

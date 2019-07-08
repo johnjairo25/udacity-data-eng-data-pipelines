@@ -11,12 +11,23 @@ class DataQualityOperator(BaseOperator):
                  redshift_conn_id="",
                  tables=[],
                  *args, **kwargs):
+        """
+        Initializes the data quality operator
+        :param redshift_conn_id: identifier of the redshift Connection in Airflow
+        :param tables: array of tables to verify
+        :param args: Airflow's args
+        :param kwargs: Airflow's kwargs
+        """
 
         super(DataQualityOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
         self.tables = tables
 
     def execute(self, context):
+        """
+        Executes the data quality validation. Verifies that the table exists and has at least one row.
+        :param context: Airflow's context
+        """
         redshift = PostgresHook(self.redshift_conn_id)
 
         for table in self.tables:

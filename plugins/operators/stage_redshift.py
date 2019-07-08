@@ -34,6 +34,20 @@ class StageToRedshiftOperator(BaseOperator):
                  delimiter=",",
                  json_parameter="auto",
                  *args, **kwargs):
+        """
+        It moves data from Amazon S3 to staging tables in Redshift.
+        :param redshift_conn_id: identifier of the Redshift connection in Airflow.
+        :param aws_credentials_id: identifier of the AWS credentials in Airflow.
+        :param table: the table that we want to load.
+        :param s3_bucket: the s3 source bucket.
+        :param s3_key: the s3 source key.
+        :param file_type: the file type. It must be either csv or json.
+        :param ignore_headers: for csv files, it specifies if headers should be ignored.
+        :param delimiter: the csv file delimiter.
+        :param json_parameter: the json parameter used to specify how to import the file.
+        :param args: Airflow's args.
+        :param kwargs: Airflow's kwargs.
+        """
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
         self.aws_credentials_id = aws_credentials_id
@@ -46,6 +60,10 @@ class StageToRedshiftOperator(BaseOperator):
         self.json_parameter = json_parameter
 
     def execute(self, context):
+        """
+        Loads the data from S3 to a staging table in Redshift.
+        :param context: Airflow's context.
+        """
         aws_hook = AwsHook(self.aws_credentials_id)
         credentials = aws_hook.get_credentials()
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
